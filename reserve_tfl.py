@@ -89,10 +89,11 @@ class ReserveTFL():
         if ENABLE_LOGIN:
             self.login_tock()
 
-# https://www.exploretock.com/ltdeditionsushi/experience/349692/summer-lunch-at-sushi-bar-reservation?date=2022-10-29&size=1&time=19%3A30
         while not RESERVATION_FOUND:
             time.sleep(REFRESH_DELAY_MSEC / 1000)
-            self.driver.get("https://www.exploretock.com/ltdeditionsushi/experience/349692/search?date=%s-%s-02&size=%s&time=%s" % (RESERVATION_YEAR, month_num(RESERVATION_MONTH), RESERVATION_SIZE, "22%3A00"))
+            #Target link: https://www.exploretock.com/ltdeditionsushi/experience/349692/summer-lunch-at-sushi-bar-reservation?date=2022-10-29&size=1&time=19%3A30
+            #Backup: https://www.exploretock.com/ltdeditionsushi/experience/349692/search?date=%s-%s-02&size=%s&time=%s
+            self.driver.get("https://www.exploretock.com/ltdeditionsushi/experience/349692/summer-lunch-at-sushi-bar-reservation?date=%s-%s-02&size=%s&time=%s" % (RESERVATION_YEAR, month_num(RESERVATION_MONTH), RESERVATION_SIZE, "22%3A00"))
             WebDriverWait(self.driver, WEBDRIVER_TIMEOUT_DELAY_MS).until(expected_conditions.presence_of_element_located((By.CSS_SELECTOR, "div.ConsumerCalendar-month")))
 
             if not self.search_month():
