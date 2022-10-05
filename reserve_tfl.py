@@ -91,6 +91,8 @@ class ReserveTFL():
 
         while not RESERVATION_FOUND:
             time.sleep(REFRESH_DELAY_MSEC / 1000)
+            # Ltd: https://www.exploretock.com/ltdeditionsushi/experience/346803/sushi-bar-reservation
+            # Reservations are scheduled for release on October 15, 2022 at 11:00 AM Pacific Daylight Time.
             #Target link: https://www.exploretock.com/ltdeditionsushi/experience/349692/summer-lunch-at-sushi-bar-reservation?date=2022-10-29&size=1&time=19%3A30
             #Backup: https://www.exploretock.com/ltdeditionsushi/experience/349692/search?date=%s-%s-02&size=%s&time=%s
             self.driver.get("https://www.exploretock.com/ltdeditionsushi/experience/349692/summer-lunch-at-sushi-bar-reservation?date=%s-%s-02&size=%s&time=%s" % (RESERVATION_YEAR, month_num(RESERVATION_MONTH), RESERVATION_SIZE, "22%3A00"))
