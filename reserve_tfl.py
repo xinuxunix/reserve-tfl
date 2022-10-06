@@ -91,11 +91,14 @@ class ReserveTFL():
 
         while not RESERVATION_FOUND:
             time.sleep(REFRESH_DELAY_MSEC / 1000)
+            # For testing purpose: https://www.exploretock.com/84yesler/experience/286812/indoor-dinner-reservation?date=2022-10-29&size=2&time=20%3A00
+            self.driver.get("https://www.exploretock.com/84yesler/experience/286812/search?date=%s-%s-02&size=%s&time=%s" % (RESERVATION_YEAR, month_num(RESERVATION_MONTH), RESERVATION_SIZE, "22%3A00"))
+
             # Ltd: https://www.exploretock.com/ltdeditionsushi/experience/346803/sushi-bar-reservation
             # Reservations are scheduled for release on October 15, 2022 at 11:00 AM Pacific Daylight Time.
             # Target link: https://www.exploretock.com/ltdeditionsushi/experience/349692/summer-lunch-at-sushi-bar-reservation?date=2022-10-29&size=1&time=19%3A30
             # Backup: https://www.exploretock.com/ltdeditionsushi/experience/349692/search?date=%s-%s-02&size=%s&time=%s
-            self.driver.get("https://www.exploretock.com/ltdeditionsushi/experience/349692/search?date=%s-%s-02&size=%s&time=%s" % (RESERVATION_YEAR, month_num(RESERVATION_MONTH), RESERVATION_SIZE, "22%3A00"))
+            #self.driver.get("https://www.exploretock.com/ltdeditionsushi/experience/349692/search?date=%s-%s-02&size=%s&time=%s" % (RESERVATION_YEAR, month_num(RESERVATION_MONTH), RESERVATION_SIZE, "22%3A00"))
             
             # Wataru: https://www.exploretock.com/wataru/experience/65237/sushi-bar-reservation
             # Now we reopened sushi bar ”Omakase” on Thursday, Friday, Saturday and Sunday from 7:30 pm.
