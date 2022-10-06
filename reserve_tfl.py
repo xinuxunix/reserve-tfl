@@ -27,7 +27,7 @@ RESERVATION_TIME_MIN = datetime.strptime(EARLIEST_TIME, RESERVATION_TIME_FORMAT)
 RESERVATION_TIME_MAX = datetime.strptime(LATEST_TIME, RESERVATION_TIME_FORMAT)
 
 # Set the party size for the reservation
-RESERVATION_SIZE = 1
+RESERVATION_SIZE = 2
 
 # Multithreading configurations
 NUM_THREADS = 1
@@ -95,13 +95,14 @@ class ReserveTFL():
             # Reservations are scheduled for release on October 15, 2022 at 11:00 AM Pacific Daylight Time.
             #Target link: https://www.exploretock.com/ltdeditionsushi/experience/349692/summer-lunch-at-sushi-bar-reservation?date=2022-10-29&size=1&time=19%3A30
             #Backup: https://www.exploretock.com/ltdeditionsushi/experience/349692/search?date=%s-%s-02&size=%s&time=%s
-            self.driver.get("https://www.exploretock.com/ltdeditionsushi/experience/349692/summer-lunch-at-sushi-bar-reservation?date=%s-%s-02&size=%s&time=%s" % (RESERVATION_YEAR, month_num(RESERVATION_MONTH), RESERVATION_SIZE, "22%3A00"))
+            self.driver.get("https://www.exploretock.com/ltdeditionsushi/experience/349692/search?date=%s-%s-02&size=%s&time=%s" % (RESERVATION_YEAR, month_num(RESERVATION_MONTH), RESERVATION_SIZE, "22%3A00"))
             
             # Wataru: https://www.exploretock.com/wataru/experience/65237/sushi-bar-reservation
+            # Taneda: https://www.exploretock.com/taneda/experience/329211/taneda-omakase
             # Now we reopened sushi bar ”Omakase” on Thursday, Friday, Saturday and Sunday from 7:30 pm.
             # (Sushi bar reservations are accepted up to 1 months in advance. Reservations opens up at 12:00 am on the 1st of each month for the following month.)
             # Backup: https://www.exploretock.com/ltdeditionsushi/experience/349692/search?date=%s-%s-02&size=%s&time=%s
-            self.driver.get("https://www.exploretock.com/wataru/experience/65237/search?date=%s-%s-02&size=%s&time=%s" % (RESERVATION_YEAR, month_num(RESERVATION_MONTH), RESERVATION_SIZE, "22%3A00"))
+            self.driver.get("https://www.exploretock.com/taneda/experience/329211/search?date=%s-%s-02&size=%s&time=%s" % (RESERVATION_YEAR, month_num(RESERVATION_MONTH), RESERVATION_SIZE, "22%3A00"))
             WebDriverWait(self.driver, WEBDRIVER_TIMEOUT_DELAY_MS).until(expected_conditions.presence_of_element_located((By.CSS_SELECTOR, "div.ConsumerCalendar-month")))
 
             if not self.search_month():
