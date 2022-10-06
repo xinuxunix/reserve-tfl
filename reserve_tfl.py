@@ -15,19 +15,19 @@ TOCK_PASSWORD = "SET_YOUR_PASSWORD_HERE"
 
 # Set your specific reservation month and days
 RESERVATION_MONTH = 'October'
-RESERVATION_DAYS = ['22', '23', '24']
+RESERVATION_DAYS = ['29']
 RESERVATION_YEAR = '2022'
 RESERVATION_TIME_FORMAT = "%I:%M %p"
 
 # Set the time range for acceptable reservation times.
 # I.e., any available slots between 5:00 PM and 8:30 PM
-EARLIEST_TIME = "5:00 PM"
+EARLIEST_TIME = "12:00 PM"
 LATEST_TIME = "8:30 PM"
 RESERVATION_TIME_MIN = datetime.strptime(EARLIEST_TIME, RESERVATION_TIME_FORMAT)
 RESERVATION_TIME_MAX = datetime.strptime(LATEST_TIME, RESERVATION_TIME_FORMAT)
 
 # Set the party size for the reservation
-RESERVATION_SIZE = 2
+RESERVATION_SIZE = 1
 
 # Multithreading configurations
 NUM_THREADS = 1
@@ -36,7 +36,7 @@ RESERVATION_FOUND = False
 
 # Time between each page refresh in milliseconds. Decrease this time to
 # increase the number of reservation attempts
-REFRESH_DELAY_MSEC = 500
+REFRESH_DELAY_MSEC = 5000
 
 # Chrome extension configurations that are used with Luminati.io proxy.
 # Enable proxy to avoid getting IP potentially banned. This should be enabled only if the REFRESH_DELAY_MSEC
@@ -91,7 +91,11 @@ class ReserveTFL():
 
         while not RESERVATION_FOUND:
             time.sleep(REFRESH_DELAY_MSEC / 1000)
-            self.driver.get("https://www.exploretock.com/ivarsacresofclams/search?date=%s-%s-02&size=%s&time=%s" % (RESERVATION_YEAR, month_num(RESERVATION_MONTH), RESERVATION_SIZE, "22%3A00"))
+            # Ltd: https://www.exploretock.com/ltdeditionsushi/experience/346803/sushi-bar-reservation
+            # Reservations are scheduled for release on October 15, 2022 at 11:00 AM Pacific Daylight Time.
+            #Target link: https://www.exploretock.com/ltdeditionsushi/experience/349692/summer-lunch-at-sushi-bar-reservation?date=2022-10-29&size=1&time=19%3A30
+            #Backup: https://www.exploretock.com/ltdeditionsushi/experience/349692/search?date=%s-%s-02&size=%s&time=%s
+            self.driver.get("https://www.exploretock.com/ltdeditionsushi/experience/349692/summer-lunch-at-sushi-bar-reservation?date=%s-%s-02&size=%s&time=%s" % (RESERVATION_YEAR, month_num(RESERVATION_MONTH), RESERVATION_SIZE, "22%3A00"))
             WebDriverWait(self.driver, WEBDRIVER_TIMEOUT_DELAY_MS).until(expected_conditions.presence_of_element_located((By.CSS_SELECTOR, "div.ConsumerCalendar-month")))
 
             if not self.search_month():
@@ -105,7 +109,7 @@ class ReserveTFL():
             time.sleep(BROWSER_CLOSE_DELAY_SEC)
 
     def login_tock(self):
-        self.driver.get("https://www.exploretock.com/ivarsacresofclams/login")
+        self.driver.get("https://www.exploretock.com/ltdeditionsushi/experience/349692/login")
         WebDriverWait(self.driver, WEBDRIVER_TIMEOUT_DELAY_MS).until(expected_conditions.presence_of_element_located((By.NAME, "email")))
         self.driver.find_element(By.NAME, "email").send_keys(TOCK_USERNAME)
         self.driver.find_element(By.NAME, "password").send_keys(TOCK_PASSWORD)
