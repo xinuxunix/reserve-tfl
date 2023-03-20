@@ -8,16 +8,19 @@ from selenium.webdriver.support import expected_conditions
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.chrome.options import Options
 
+from selenium.webdriver.chrome.service import Service as ChromeService
+from webdriver_manager.chrome import ChromeDriverManager
+
 # Login not required for Tock. Leave it as false to decrease reservation delay
 ENABLE_LOGIN = False
 TOCK_USERNAME = "SET_YOUR_USER_NAME_HERE"
 TOCK_PASSWORD = "SET_YOUR_PASSWORD_HERE"
 
 # Set your specific reservation month and days
-RESERVATION_MONTH = 'December'
+RESERVATION_MONTH = 'April'
 #RESERVATION_DAYS = ['30']
-RESERVATION_DAYS = ['23','30','31']
-RESERVATION_YEAR = '2022'
+RESERVATION_DAYS = ['22','15','8']
+RESERVATION_YEAR = '2023'
 RESERVATION_TIME_FORMAT = "%I:%M %p"
 
 # Set the time range for acceptable reservation times.
@@ -31,13 +34,13 @@ RESERVATION_TIME_MAX = datetime.strptime(LATEST_TIME, RESERVATION_TIME_FORMAT)
 RESERVATION_SIZE = 2
 
 # Multithreading configurations
-NUM_THREADS = 7
-THREAD_DELAY_SEC = 1
+NUM_THREADS = 1
+THREAD_DELAY_SEC = 5
 RESERVATION_FOUND = False
 
 # Time between each page refresh in milliseconds. Decrease this time to
 # increase the number of reservation attempts
-REFRESH_DELAY_MSEC = 500
+REFRESH_DELAY_MSEC = 5000
 
 # Chrome extension configurations that are used with Luminati.io proxy.
 # Enable proxy to avoid getting IP potentially banned. This should be enabled only if the REFRESH_DELAY_MSEC
@@ -78,7 +81,8 @@ class ReserveTFL():
             options.add_argument('--user-data-dir={}'.format(USER_DATA_DIR))
             options.add_argument('--profile-directory=Default')
 
-        self.driver = webdriver.Chrome(options=options)
+        #self.driver = webdriver.Chrome(options=options)
+        self.driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()))
 
     def teardown(self):
         self.driver.quit()
@@ -99,7 +103,8 @@ class ReserveTFL():
             # Website: https://www.exploretock.com/ltdeditionsushi/experience/346803/sushi-bar-reservation
             # Reservations are scheduled for release on October 15, 2022 at 11:00 AM Pacific Daylight Time.
             # Target link: https://www.exploretock.com/ltdeditionsushi/experience/389392/summer-lunch-at-sushi-bar-reservation?date=2022-10-29&size=1&time=19%3A30
-            self.driver.get("https://www.exploretock.com/ltdeditionsushi/experience/389392/search?date=%s-%s-02&size=%s&time=%s" % (RESERVATION_YEAR, month_num(RESERVATION_MONTH), RESERVATION_SIZE, "22%3A00"))
+            self.driver.get("https://www.exploretock.com/ivarssalmonhouse/experience/304268/search?date=%s-%s-02&size=%s&time=%s" % (RESERVATION_YEAR, month_num(RESERVATION_MONTH), RESERVATION_SIZE, "22%3A00"))
+            
             
             # Wataru 
             # Website: https://www.exploretock.com/wataru/experience/65237/sushi-bar-reservation
@@ -149,10 +154,13 @@ class ReserveTFL():
             print("Month", RESERVATION_MONTH, "not found. Ending search")
             return False
 
+        # Sort the reservation days in ascending order
+        sorted_reservation_days = sorted(RESERVATION_DAYS, key=int)
+
         for day in month_object.find_elements(By.CSS_SELECTOR, "button.ConsumerCalendar-day.is-in-month.is-available"):
             span = day.find_element(By.CSS_SELECTOR, "span.B2")
             print("Encountered day: " + span.text)
-            if span.text in RESERVATION_DAYS:
+            if span.text in sorted_reservation_days:
                 print("Day %s found. Clicking button" % span.text)
                 day.click()
 
