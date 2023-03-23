@@ -19,13 +19,13 @@ TOCK_PASSWORD = "SET_YOUR_PASSWORD_HERE"
 # Set your specific reservation month and days
 RESERVATION_MONTH = 'April'
 #RESERVATION_DAYS = ['30']
-RESERVATION_DAYS = ['22','15','8']
+RESERVATION_DAYS = ['27','15','8']
 RESERVATION_YEAR = '2023'
 RESERVATION_TIME_FORMAT = "%I:%M %p"
 
 # Set the time range for acceptable reservation times.
 # I.e., any available slots between 5:00 PM and 8:30 PM
-EARLIEST_TIME = "5:00 PM"
+EARLIEST_TIME = "12:00 PM"
 LATEST_TIME = "9:30 PM"
 RESERVATION_TIME_MIN = datetime.strptime(EARLIEST_TIME, RESERVATION_TIME_FORMAT)
 RESERVATION_TIME_MAX = datetime.strptime(LATEST_TIME, RESERVATION_TIME_FORMAT)
@@ -72,17 +72,25 @@ MONTH_NUM = {
     'december':  '12'
 }
 
-
-class ReserveTFL():
+class ReserveOnTock():
     def __init__(self):
+        self.driver = self._initialize_driver()
+
+    def _initialize_driver(self):
+        options = self._get_chrome_options()
+        driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()), options=options)
+        print("Driver created:", driver)
+        return driver
+
+    def _get_chrome_options(self):
         options = Options()
+
         if ENABLE_PROXY:
             options.add_argument('--load-extension={}'.format(EXTENSION_PATH))
             options.add_argument('--user-data-dir={}'.format(USER_DATA_DIR))
             options.add_argument('--profile-directory=Default')
 
-        #self.driver = webdriver.Chrome(options=options)
-        self.driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()))
+        return options
 
     def teardown(self):
         self.driver.quit()
@@ -103,8 +111,8 @@ class ReserveTFL():
             # Website: https://www.exploretock.com/ltdeditionsushi/experience/346803/sushi-bar-reservation
             # Reservations are scheduled for release on October 15, 2022 at 11:00 AM Pacific Daylight Time.
             # Target link: https://www.exploretock.com/ltdeditionsushi/experience/389392/summer-lunch-at-sushi-bar-reservation?date=2022-10-29&size=1&time=19%3A30
-            self.driver.get("https://www.exploretock.com/ivarssalmonhouse/experience/304268/search?date=%s-%s-02&size=%s&time=%s" % (RESERVATION_YEAR, month_num(RESERVATION_MONTH), RESERVATION_SIZE, "22%3A00"))
-            
+            #self.driver.get("https://www.exploretock.com/ivarssalmonhouse/experience/304268/search?date=%s-%s-02&size=%s&time=%s" % (RESERVATION_YEAR, month_num(RESERVATION_MONTH), RESERVATION_SIZE, "22%3A00"))
+            self.driver.get("https://www.exploretock.com/ltdeditionsushi/experience/397975//search?date=%s-%s-02&size=%s&time=%s" % (RESERVATION_YEAR, month_num(RESERVATION_MONTH), RESERVATION_SIZE, "22%3A00"))
             
             # Wataru 
             # Website: https://www.exploretock.com/wataru/experience/65237/sushi-bar-reservation
@@ -119,7 +127,7 @@ class ReserveTFL():
             
             WebDriverWait(self.driver, WEBDRIVER_TIMEOUT_DELAY_MS).until(expected_conditions.presence_of_element_located((By.CSS_SELECTOR, "div.ConsumerCalendar-month")))
 
-            if not self.search_month():
+            if not self.search_target_day():
                 print("No available days found. Continuing next search iteration")
                 continue
 
@@ -137,7 +145,7 @@ class ReserveTFL():
         self.driver.find_element(By.CSS_SELECTOR, ".Button").click()
         WebDriverWait(self.driver, WEBDRIVER_TIMEOUT_DELAY_MS).until(expected_conditions.visibility_of_element_located((By.CSS_SELECTOR, ".MainHeader-accountName")))
 
-    def search_month(self):
+    def search_target_day(self):
         month_object = None
 
         for month in self.driver.find_elements(By.CSS_SELECTOR, "div.ConsumerCalendar-month"):
@@ -154,21 +162,27 @@ class ReserveTFL():
             print("Month", RESERVATION_MONTH, "not found. Ending search")
             return False
 
-        # Sort the reservation days in ascending order
-        sorted_reservation_days = sorted(RESERVATION_DAYS, key=int)
-
-        for day in month_object.find_elements(By.CSS_SELECTOR, "button.ConsumerCalendar-day.is-in-month.is-available"):
-            span = day.find_element(By.CSS_SELECTOR, "span.B2")
-            print("Encountered day: " + span.text)
-            if span.text in sorted_reservation_days:
-                print("Day %s found. Clicking button" % span.text)
-                day.click()
+        for target_day in RESERVATION_DAYS:
+            day_element = self.find_day_element(month_object, target_day)
+            if day_element is not None:
+                print("Day %s found. Clicking button" % target_day)
+                day_element.click()
 
                 if self.search_time():
                     print("Time found")
                     return True
 
         return False
+
+    def find_day_element(self, month_object, target_day):
+        for day in month_object.find_elements(By.CSS_SELECTOR, "button.ConsumerCalendar-day.is-in-month.is-available"):
+            span = day.find_element(By.CSS_SELECTOR, "span.B2")
+            print("Encountered day: " + span.text)
+
+            if span.text == target_day:
+                return day
+
+        return None
 
     def search_time(self):
         for item in self.driver.find_elements(By.CSS_SELECTOR, "button.Consumer-resultsListItem.is-available"):
@@ -191,7 +205,7 @@ def month_num(month):
 
 
 def run_reservation():
-    r = ReserveTFL()
+    r = ReserveOnTock()
     r.reserve()
     r.teardown()
 
@@ -213,4 +227,5 @@ def continuous_reservations():
         execute_reservations()
 
 
-continuous_reservations()
+if __name__ == '__main__':
+    continuous_reservations()
