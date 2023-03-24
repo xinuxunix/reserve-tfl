@@ -11,66 +11,17 @@ from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.chrome.service import Service as ChromeService
 from webdriver_manager.chrome import ChromeDriverManager
 
-# Login not required for Tock. Leave it as false to decrease reservation delay
-ENABLE_LOGIN = False
-TOCK_USERNAME = "SET_YOUR_USER_NAME_HERE"
-TOCK_PASSWORD = "SET_YOUR_PASSWORD_HERE"
+from config import *  # Import the configuration variables from config.py
 
-# Set your specific reservation month and days
-RESERVATION_MONTH = 'April'
-#RESERVATION_DAYS = ['30']
-RESERVATION_DAYS = ['27','15','8']
-RESERVATION_YEAR = '2023'
-RESERVATION_TIME_FORMAT = "%I:%M %p"
-
-# Set the time range for acceptable reservation times.
-# I.e., any available slots between 5:00 PM and 8:30 PM
-EARLIEST_TIME = "12:00 PM"
-LATEST_TIME = "9:30 PM"
 RESERVATION_TIME_MIN = datetime.strptime(EARLIEST_TIME, RESERVATION_TIME_FORMAT)
 RESERVATION_TIME_MAX = datetime.strptime(LATEST_TIME, RESERVATION_TIME_FORMAT)
 
-# Set the party size for the reservation
-RESERVATION_SIZE = 2
-
-# Multithreading configurations
-NUM_THREADS = 1
-THREAD_DELAY_SEC = 5
-RESERVATION_FOUND = False
-
-# Time between each page refresh in milliseconds. Decrease this time to
-# increase the number of reservation attempts
-REFRESH_DELAY_MSEC = 5000
-
-# Chrome extension configurations that are used with Luminati.io proxy.
-# Enable proxy to avoid getting IP potentially banned. This should be enabled only if the REFRESH_DELAY_MSEC
-# is extremely low (sub hundred) and NUM_THREADS > 1.
-ENABLE_PROXY = False
-USER_DATA_DIR = '~/Library/Application Support/Google/Chrome'
-PROFILE_DIR = 'Default'
-# https://chrome.google.com/webstore/detail/luminati/efohiadmkaogdhibjbmeppjpebenaool
-EXTENSION_PATH = USER_DATA_DIR + '/' + PROFILE_DIR + '/Extensions/efohiadmkaogdhibjbmeppjpebenaool/1.149.316_0'
-
-# Delay for how long the browser remains open so that the reservation can be finalized. Tock holds the reservation
-# for 10 minutes before releasing.
-BROWSER_CLOSE_DELAY_SEC = 600
-
-WEBDRIVER_TIMEOUT_DELAY_MS = 3000
-
-MONTH_NUM = {
-    'january':   '01',
-    'february':  '02',
-    'march':     '03',
-    'april':     '04',
-    'may':       '05',
-    'june':      '06',
-    'july':      '07',
-    'august':    '08',
-    'september': '09',
-    'october':   '10',
-    'november':  '11',
-    'december':  '12'
-}
+def generate_url(reservation_year, reservation_month_num, reservation_size, time_code):
+    base_url = TEST_URL
+    #base_url = LTD_URL
+    #base_url = WATARU_URL
+    #base_url = TANEDA_URL
+    return f"{base_url}/search?date={reservation_year}-{reservation_month_num}-02&size={reservation_size}&time={time_code}"
 
 class ReserveOnTock():
     def __init__(self):
@@ -95,36 +46,18 @@ class ReserveOnTock():
     def teardown(self):
         self.driver.quit()
 
+
     def reserve(self):
         global RESERVATION_FOUND
-        print("Looking for availability on month: %s, days: %s, between times: %s and %s" % (RESERVATION_MONTH, RESERVATION_DAYS, EARLIEST_TIME, LATEST_TIME))
+        print(f"Looking for availability on month: {RESERVATION_MONTH}, days: {RESERVATION_DAYS}, between times: {EARLIEST_TIME} and {LATEST_TIME}")
 
         if ENABLE_LOGIN:
             self.login_tock()
 
         while not RESERVATION_FOUND:
             time.sleep(REFRESH_DELAY_MSEC / 1000)
-            # For testing purpose: https://www.exploretock.com/84yesler/experience/286812/indoor-dinner-reservation?date=2022-10-29&size=2&time=20%3A00
-            #self.driver.get("https://www.exploretock.com/84yesler/experience/286812/search?date=%s-%s-30&size=%s&time=%s" % (RESERVATION_YEAR, month_num(RESERVATION_MONTH), RESERVATION_SIZE, "22%3A00"))
+            self.driver.get(generate_url(RESERVATION_YEAR, month_num(RESERVATION_MONTH), RESERVATION_SIZE, "22%3A00"))
 
-            # LTD Sushi 
-            # Website: https://www.exploretock.com/ltdeditionsushi/experience/346803/sushi-bar-reservation
-            # Reservations are scheduled for release on October 15, 2022 at 11:00 AM Pacific Daylight Time.
-            # Target link: https://www.exploretock.com/ltdeditionsushi/experience/389392/summer-lunch-at-sushi-bar-reservation?date=2022-10-29&size=1&time=19%3A30
-            #self.driver.get("https://www.exploretock.com/ivarssalmonhouse/experience/304268/search?date=%s-%s-02&size=%s&time=%s" % (RESERVATION_YEAR, month_num(RESERVATION_MONTH), RESERVATION_SIZE, "22%3A00"))
-            self.driver.get("https://www.exploretock.com/ltdeditionsushi/experience/397975//search?date=%s-%s-02&size=%s&time=%s" % (RESERVATION_YEAR, month_num(RESERVATION_MONTH), RESERVATION_SIZE, "22%3A00"))
-            
-            # Wataru 
-            # Website: https://www.exploretock.com/wataru/experience/65237/sushi-bar-reservation
-            # Now we reopened sushi bar ”Omakase” on Thursday, Friday, Saturday and Sunday from 7:30 pm.
-            # (Sushi bar reservations are accepted up to 1 months in advance. Reservations opens up at 12:00 am on the 1st of each month for the following month.)
-            #self.driver.get("https://www.exploretock.com/wataru/experience/65237/search?date=%s-%s-02&size=%s&time=%s" % (RESERVATION_YEAR, month_num(RESERVATION_MONTH), RESERVATION_SIZE, "22%3A00"))
-
-            # Taneda: https://www.exploretock.com/taneda/experience/329211/taneda-omakase
-            # Reservation publishes on https://www.instagram.com/tanedaseattle/?hl=en
-            # Hours: Wednesday through Sunday 5:15-9:30pm
-            #self.driver.get("https://www.exploretock.com/taneda/experience/329211/search?date=%s-%s-02&size=%s&time=%s" % (RESERVATION_YEAR, month_num(RESERVATION_MONTH), RESERVATION_SIZE, "22%3A00"))
-            
             WebDriverWait(self.driver, WEBDRIVER_TIMEOUT_DELAY_MS).until(expected_conditions.presence_of_element_located((By.CSS_SELECTOR, "div.ConsumerCalendar-month")))
 
             if not self.search_target_day():
