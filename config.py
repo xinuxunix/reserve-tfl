@@ -25,7 +25,7 @@ TOCK_PASSWORD = "SET_YOUR_PASSWORD_HERE"
 
 # Set your specific reservation month and days
 RESERVATION_MONTH = 'April'
-RESERVATION_DAYS = ['27','15','8']
+RESERVATION_DAYS = ['23','24','18']
 RESERVATION_YEAR = '2023'
 RESERVATION_TIME_FORMAT = "%I:%M %p"
 
@@ -38,7 +38,7 @@ LATEST_TIME = "9:30 PM"
 RESERVATION_SIZE = 2
 
 # Multithreading configurations
-NUM_THREADS = 5
+NUM_THREADS = 1
 THREAD_DELAY_SEC = 5
 RESERVATION_FOUND = False
 

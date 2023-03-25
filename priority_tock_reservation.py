@@ -96,6 +96,7 @@ class ReserveOnTock():
             return False
 
         for target_day in RESERVATION_DAYS:
+            print("Searching target day: " + target_day)
             day_element = self.find_day_element(month_object, target_day)
             if day_element is not None:
                 print("Day %s found. Clicking button" % target_day)
@@ -110,7 +111,7 @@ class ReserveOnTock():
     def find_day_element(self, month_object, target_day):
         for day in month_object.find_elements(By.CSS_SELECTOR, "button.ConsumerCalendar-day.is-in-month.is-available"):
             span = day.find_element(By.CSS_SELECTOR, "span.B2")
-            print("Encountered day: " + span.text)
+            #print("Encountered day: " + span.text)
 
             if span.text == target_day:
                 return day
