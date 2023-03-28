@@ -17,9 +17,9 @@ RESERVATION_TIME_MIN = datetime.strptime(EARLIEST_TIME, RESERVATION_TIME_FORMAT)
 RESERVATION_TIME_MAX = datetime.strptime(LATEST_TIME, RESERVATION_TIME_FORMAT)
 
 def generate_url(reservation_year, reservation_month_num, reservation_size, time_code):
-    base_url = TEST_URL
+    #base_url = TEST_URL
     #base_url = LTD_URL
-    #base_url = WATARU_URL
+    base_url = WATARU_URL
     #base_url = TANEDA_URL
     return f"{base_url}/search?date={reservation_year}-{reservation_month_num}-02&size={reservation_size}&time={time_code}"
 

@@ -2,7 +2,7 @@ import time
 
 # LTD Sushi 
 # Website: https://www.exploretock.com/ltdeditionsushi/experience/346803/sushi-bar-reservation
-# Reservations are scheduled for release on October 15, 2022 at 11:00 AM Pacific Daylight Time.
+# Reservations are scheduled for release on 15th each month at 11:00 AM Pacific Daylight Time.
 LTD_URL = "https://www.exploretock.com/ltdeditionsushi/experience/397975"
 
 # Wataru 
