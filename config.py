@@ -3,7 +3,7 @@ import time
 # LTD Sushi 
 # Website: https://www.exploretock.com/ltdeditionsushi/experience/346803/sushi-bar-reservation
 # Reservations are scheduled for release on 15th each month at 11:00 AM Pacific Daylight Time.
-LTD_URL = "https://www.exploretock.com/ltdeditionsushi/experience/397975"
+LTD_URL = "https://www.exploretock.com/ltdeditionsushi/experience/389392"
 
 # Wataru 
 # Website: https://www.exploretock.com/wataru/experience/65237/sushi-bar-reservation
@@ -24,15 +24,15 @@ TOCK_USERNAME = "SET_YOUR_USER_NAME_HERE"
 TOCK_PASSWORD = "SET_YOUR_PASSWORD_HERE"
 
 # Set your specific reservation month and days
-RESERVATION_MONTH = 'April'
-RESERVATION_DAYS = ['23','24','18']
+RESERVATION_MONTH = 'May'
+RESERVATION_DAYS = ['6','13','20']
 RESERVATION_YEAR = '2023'
 RESERVATION_TIME_FORMAT = "%I:%M %p"
 
 # Set the time range for acceptable reservation times.
 # I.e., any available slots between 5:00 PM and 8:30 PM
-EARLIEST_TIME = "12:00 PM"
-LATEST_TIME = "9:30 PM"
+EARLIEST_TIME = "5:00 PM"
+LATEST_TIME = "7:00 PM"
 
 # Set the party size for the reservation
 RESERVATION_SIZE = 2
