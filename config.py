@@ -13,7 +13,7 @@ WATARU_URL = "https://www.exploretock.com/wataru/experience/65237"
 
 # Taneda: https://www.exploretock.com/taneda/experience/329211/taneda-omakase
 # Reservation publishes on https://www.instagram.com/tanedaseattle/?hl=en
-# Hours: Wednesday through Sunday 5:15-9:30pm
+# Hours: 5:15pm-7pm & 7:45pm-9:30pm from Wed through Sun
 TANEDA_URL = "https://www.exploretock.com/taneda/experience/329211"
 
 TEST_URL= "https://www.exploretock.com/84yesler/experience/286812"
@@ -25,20 +25,20 @@ TOCK_PASSWORD = "SET_YOUR_PASSWORD_HERE"
 
 # Set your specific reservation month and days
 RESERVATION_MONTH = 'May'
-RESERVATION_DAYS = ['6','13','20']
+RESERVATION_DAYS = ['6', '7', '13', '14','20', '21', '27', '28']
 RESERVATION_YEAR = '2023'
 RESERVATION_TIME_FORMAT = "%I:%M %p"
 
 # Set the time range for acceptable reservation times.
 # I.e., any available slots between 5:00 PM and 8:30 PM
 EARLIEST_TIME = "5:00 PM"
-LATEST_TIME = "7:00 PM"
+LATEST_TIME = "7:55 PM"
 
 # Set the party size for the reservation
 RESERVATION_SIZE = 2
 
 # Multithreading configurations
-NUM_THREADS = 1
+NUM_THREADS = 5
 THREAD_DELAY_SEC = 5
 RESERVATION_FOUND = False
 
