@@ -1,4 +1,5 @@
 # https://selenium-python.readthedocs.io/page-objects.html#test-case
+# https://www.youtube.com/watch?v=O_sIPPA4euw&list=PLzMcBGfZo4-n40rB1XaJ0ak1bemvlqumQ&index=6
 import unittest
 
 from selenium import webdriver
